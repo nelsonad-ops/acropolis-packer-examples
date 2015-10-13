@@ -1,0 +1,75 @@
+{
+  "builders":
+  [
+    {
+      "type": "qemu",
+      "iso_url": "http://mirrors.rit.edu/centos/6.7/isos/x86_64/CentOS-6.7-x86_64-minimal.iso",
+      "iso_checksum": "9381a24b8bee2fed0c26896141a64b69",
+      "iso_checksum_type": "md5",
+      "output_directory": "output_centos_qcow2",
+      "ssh_wait_timeout": "30s",
+      "shutdown_command": "shutdown -P now",
+      "disk_size": 5000,
+      "format": "raw",
+      "headless": true,
+      "accelerator": "kvm",
+      "http_directory": "httpdir",
+      "http_port_min": 10082,
+      "http_port_max": 10089,
+      "ssh_host_port_min": 2222,
+      "ssh_host_port_max": 2229,
+      "ssh_username": "root",
+      "ssh_password": "nutanix",
+      "ssh_port": 22,
+      "ssh_wait_timeout": "900m",
+      "vm_name": "centos67template.img",
+      "net_device": "virtio-net",
+      "disk_interface": "virtio",
+      "boot_wait": "5s",
+      
+      "boot_command":
+      [
+        "<tab>",
+        " append console=ttyS0,115200n8 ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/centos6-ks.cfg",
+        "<enter>"
+      ]
+    }
+  ],
+ "provisioners":
+  [
+    {
+      "type": "shell",
+      "inline": [
+        "sleep 3",
+        "echo \"NOZEROCONF=yes\" >> /etc/sysconfig/network",
+        "adduser build-user",
+        "echo 'build-user:MySecretPassword' |chpasswd",
+        "mkdir /home/build-user/.ssh",
+        "chown build-user:build-user /home/build-user/.ssh",
+        "chmod 700 /home/build-user/.ssh",
+        "echo \"build-user ALL=(ALL) ALL\" >> /etc/sudoers"
+      ]
+    },
+    {
+      "type": "file",
+      "source": "centos.json",
+      "destination": "/root/centos.json",
+      "source": "httpdir/centos6-ks.cfg",
+      "destination": "/root/centos6-ks.cfg"
+    },
+    {
+      "type": "file",
+      "source": "id_rsa_cloud-user.pub",
+      "destination": "/home/build-user/.ssh/authorized_keys"
+    },
+    {
+     "type": "shell",
+      "inline": [
+        "chmod 600 /home/build-user/.ssh/authorized_keys",
+        "chown build-user:build-user /home/build-user/.ssh/authorized_keys",
+        "sed -i 's/^SELINUX=.*/SELINUX=permissive/g' /etc/selinux/config"
+      ]
+    }
+  ]
+ 
+ }
