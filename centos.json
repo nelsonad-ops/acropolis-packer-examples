@@ -43,7 +43,7 @@
         "sleep 3",
         "echo \"NOZEROCONF=yes\" >> /etc/sysconfig/network",
         "adduser build-user",
-        "echo 'build-user:MySecretPassword' |chpasswd",
+        "echo 'build-user:nutanix' |chpasswd",
         "mkdir /home/build-user/.ssh",
         "chown build-user:build-user /home/build-user/.ssh",
         "chmod 700 /home/build-user/.ssh",
