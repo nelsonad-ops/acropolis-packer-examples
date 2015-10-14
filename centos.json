@@ -42,12 +42,12 @@
       "inline": [
         "sleep 3",
         "echo \"NOZEROCONF=yes\" >> /etc/sysconfig/network",
-        "adduser build-user",
-        "echo 'build-user:nutanix' |chpasswd",
-        "mkdir /home/build-user/.ssh",
-        "chown build-user:build-user /home/build-user/.ssh",
-        "chmod 700 /home/build-user/.ssh",
-        "echo \"build-user ALL=(ALL) ALL\" >> /etc/sudoers"
+        "adduser nutanix-admin",
+        "echo 'nutanix-admin:nutanix' |chpasswd",
+        "mkdir /home/nutanix-admin/.ssh",
+        "chown nutanix-admin:nutanix-admin /home/nutanix-admin/.ssh",
+        "chmod 700 /home/nutanix-admin/.ssh",
+        "echo \"nutanix-admin ALL=(ALL) ALL\" >> /etc/sudoers"
       ]
     },
     {
@@ -59,14 +59,14 @@
     },
     {
       "type": "file",
-      "source": "id_rsa_cloud-user.pub",
-      "destination": "/home/build-user/.ssh/authorized_keys"
+      "source": "id_rsa_nutanix-admin.pub",
+      "destination": "/home/nutanix-admin/.ssh/authorized_keys"
     },
     {
      "type": "shell",
       "inline": [
-        "chmod 600 /home/build-user/.ssh/authorized_keys",
-        "chown build-user:build-user /home/build-user/.ssh/authorized_keys",
+        "chmod 600 /home/nutanix-admin/.ssh/authorized_keys",
+        "chown nutanix-admin:nutanix-admin /home/nutanix-admin/.ssh/authorized_keys",
         "sed -i 's/^SELINUX=.*/SELINUX=permissive/g' /etc/selinux/config"
       ]
     }
